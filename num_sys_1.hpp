@@ -1,5 +1,6 @@
 #define M 32
-
+#include<iostream>
+using namespace std;
 typedef struct Num
 {
     char x[2*M];

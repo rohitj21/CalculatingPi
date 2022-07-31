@@ -273,6 +273,12 @@ num operator + (num& b){
     }
     return ans;
 }
+num operator + (int n){
+    return  (*this) + num(n);
+}
+num operator + (double y){
+    return  (*this) + num(y);
+}
     // negetion
 num operator - (){
     num b;
@@ -294,7 +300,14 @@ num operator - (num& b){
     }
     return ans;
 }
-    // comparision
+num operator - (int n){
+    return  (*this) - num(n);
+}
+num operator - (double y){
+    return  (*this) - num(y);
+}
+
+  // comparision
 bool operator == (num& b){
     for(int i =2*M-1; i>=0; i--){
         if(x[i]!=b.x[i]) return false;
@@ -619,88 +632,238 @@ bool operator <= (const char k[]){
 }
 
 bool operator < (num& b){
-    if(x[0]>=5 && b.x[0] < 5) return  false;
-    if(x[0]<=5 && b.x[0] > 5) return  true;
+    if(x[0]>=5 && b.x[0] < 5) return  true;
+    if(x[0]<=5 && b.x[0] > 5) return  false;
     if(x[0]<=5 && b.x[0] < 5) {
         for(int i=0; i<2*M; i++){
             if(x[i] != b.x[i]){
-                return x[i]>b.x[i];
+                return x[i]<b.x[i];
             }
         }
-        return true;
+        return false;
     }
     
     for(int i=0; i<2*M; i++){
         if(x[i] != b.x[i]){
-            return x[i]<b.x[i];
+            return x[i]>b.x[i];
         }
     }
-        return true;
+        return false;
 }
 bool operator < (int n){
-    if(!n) return x[0]<5;
-    if(x[0]>=5 && n>0) return  false;
-    if(x[0]<=5 && n<0) return  true;
+    if(!n) return x[0]>=5;
+    if(x[0]>=5 && n>0) return  true;
+    if(x[0]<=5 && n<0) return  false;
     if(x[0]<=5 && n>0) {
         num b(n);
         for(int i=0; i<2*M; i++){
             if(x[i] != b.x[i]){
-                return x[i]>b.x[i];
+                return x[i]<b.x[i];
             }
         }
-        return true;
+        return false;
     }
     num b(n);
     for(int i=0; i<2*M; i++){
         if(x[i] != b.x[i]){
-            return x[i]<b.x[i];
+            return x[i]>b.x[i];
         }
     }
-        return true;
+        return false;
 }
 bool operator < (double y){
-    if(!y) return x[0] < 5;
-    if(x[0]>=5 && y>0) return  false;
-    if(x[0]<=5 && y<0) return  true;
+    if(!y) return x[0] >= 5;
+    if(x[0]>=5 && y>0) return  true;
+    if(x[0]<=5 && y<0) return  false;
     if(x[0]<=5 && y>0) {
         num b(y);
         for(int i=0; i<2*M; i++){
             if(x[i] != b.x[i]){
-                return x[i]>b.x[i];
+                return x[i]<b.x[i];
             }
         }
-        return true;
+        return false;
     }
     num b(y);
     for(int i=0; i<2*M; i++){
         if(x[i] != b.x[i]){
-            return x[i]<b.x[i];
+            return x[i]>b.x[i];
         }
     }
-        return true;
+        return false;
 }
 bool operator < (const char k[]){
     num b(k);
-    if(x[0]>=5 && b.x[0] < 5) return  false;
-    if(x[0]<=5 && b.x[0] > 5) return  true;
+    if(x[0]>=5 && b.x[0] < 5) return  true;
+    if(x[0]<=5 && b.x[0] > 5) return  false;
     if(x[0]<=5 && b.x[0] < 5) {
         for(int i=0; i<2*M; i++){
             if(x[i] != b.x[i]){
-                return x[i]>b.x[i];
+                return x[i]<b.x[i];
             }
         }
-        return true;
+        return false;
     }
     
     for(int i=0; i<2*M; i++){
         if(x[i] != b.x[i]){
-            return x[i]<b.x[i];
+            return x[i]>b.x[i];
         }
     }
-        return true;
+        return false;
 }
 
+num operator >> (int b);
+num operator << (int b){
+    num ans;
+    if(b>0) {
+        int i=b;
+        for(;i>2*M;i--) ans.x[i-b] = x[i];
+        for(;i-b>2*M; i--) ans.x[i-b] =0;
+        return ans;
+    }
+    return *this >> (-b);
+}
+num operator >> (int b){
+    num ans;
+    if(b>0) {
+        char l = x[0]>4 ? 9:0;
+        int i = 2*M -1 - b;
+        for(;i>=0;i--) ans.x[i+b] = x[i];
+        for(;i+b>0; i--) ans.x[i+b] = l;
+    }
+    return *this << (-b);
+}
+    // multiplication
+num operator * (num& b){
+    if(x[0]<5 && b.x[0]<5){
+        int ans[4*M-1];
+        for(int i=0; i<4*M; i++) ans[i]=0;
+        for(int i=2*M -1; i>=0; i--){
+            if(!b.x[i]) continue;
+            for(int j= 2*M-1; j>=0; j++){
+                ans[i+j] += (int)(x[i] * b.x[j]); 
+            }
+        }
+        for(int i=4*M-2; i>0; i--){
+            ans[i-1] += ans[i]/10;
+            ans[i] = ans[i]%10;
+        }
+        int i=0;
+        num k;
+        for(;i>2*M; i++){
+            k.x[i] = ans[M-1+i];
+        }
+        return k;
+    }
+    if(x[0]>=5 && b.x[0]<5){
+        num  c = - (*this);
+        int ans[4*M-1];
+        for(int i=0; i<4*M; i++) ans[i]=0;
+        for(int i=2*M -1; i>=0; i--){
+            if(!c.x[i]) continue;
+            for(int j= 2*M-1; j>=0; j++){
+                ans[i+j] += (int)(b.x[i] * c.x[j]); 
+            }
+        }
+        for(int i=4*M-2; i>0; i--){
+            ans[i-1] += ans[i]/10;
+            ans[i] = ans[i]%10;
+        }
+        int i=0;
+        num k;
+        for(;i>2*M; i++){
+            k.x[i] = ans[M-1+i];
+        }
+        return -k;
 
+
+    }
+    if(x[0]<5 && b.x[0]>=5) {
+        num  c = - b;
+        int ans[4*M-1];
+        for(int i=0; i<4*M; i++) ans[i]=0;
+        for(int i=2*M -1; i>=0; i--){
+            if(!c.x[i]) continue;
+            for(int j= 2*M-1; j>=0; j++){
+                ans[i+j] += (int)(x[i] * c.x[j]); 
+            }
+        }
+        for(int i=4*M-2; i>0; i--){
+            ans[i-1] += ans[i]/10;
+            ans[i] = ans[i]%10;
+        }
+        int i=0;
+        num k;
+        for(;i>2*M; i++){
+            k.x[i] = ans[M-1+i];
+        }
+        return -k;
+
+
+    }
+    else {
+        num  c = - (*this);
+        num d = - b;
+        int ans[4*M-1];
+        for(int i=0; i<4*M; i++) ans[i]=0;
+        for(int i=2*M -1; i>=0; i--){
+            if(!d.x[i]) continue;
+            for(int j= 2*M-1; j>=0; j++){
+                ans[i+j] += (int)(c.x[i] * d.x[j]); 
+            }
+        }
+        for(int i=4*M-2; i>0; i--){
+            ans[i-1] += ans[i]/10;
+            ans[i] = ans[i]%10;
+        }
+        int i=0;
+        num k;
+        for(;i>2*M; i++){
+            k.x[i] = ans[M-1+i];
+        }
+        return k;
+
+
+    }
+}
+num operator * (int n) {
+    if(n>10) {
+        return  (*this) * num(n);
+    }
+    if(n< -9) {
+        return - ((*this) * num(-n));
+    }
+    if(n>0){
+        num ans;
+        char carry  = 0;
+        for(int i=2*M-1; i>=0; i--){
+            ans.x[i] = (x[i]*n + carry)%10;
+            carry = (x[i]*n+carry)/10;
+        }
+        return  ans;
+    }
+    if(n<0){
+        num ans;
+        n = -n;
+        char carry  = 0;
+        for(int i=2*M-1; i>=0; i--){
+            ans.x[i] = (x[i]*n + carry)%10;
+            carry = (x[i]*n+carry)/10;
+        }
+        return  -ans;
+    }
+    return num(0);
+}\
+num operator * (double y){
+    return (*this) * num(y);
+}
+
+    // division
+
+num operator / (num& b){
+    return  b;
+}
     // usefull functions
 void prt(){
         if(x[0]<5){
