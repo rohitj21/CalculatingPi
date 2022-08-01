@@ -4,7 +4,7 @@ using namespace std;
 class num
 {
 public: 
-    static const int M = 8;
+    static const int M = 32;
 public:
     char x[2*M];
     
@@ -99,7 +99,7 @@ num(const char k[]){
     
 // operators
         // assignment
-void operator = (num&b){
+void operator = (num b){
     for(int i=0; i<2*M -1; i++) x[i] = b.x[i];return;
 }
 void operator = (int n){
@@ -198,7 +198,7 @@ void operator ++ (int){
         x[i]=0;
     }
 }
-void operator += (num& b){
+void operator += (num  b){
     char carry = 0, t;
     for(int i= 2*M -1; i>=0; i--){
         t = (x[i] + carry + b.x[i]);
@@ -236,7 +236,7 @@ void operator -- (int){
     }
 
 }
-void operator -= (num& b){
+void operator -= (num  b){
     char carry = 0, t;
     for(int i = 2*M -1; i>=0; i--){
         t = (x[i]- b.x[i]+ carry+10);
@@ -264,7 +264,7 @@ void operator -=(double y){
 }
 
     // addition
-num operator + (num& b){
+num operator + (num  b){
     num ans;
     char carry = 0;
     for(int i= 2*M - 1; i>=0; i--){
@@ -291,7 +291,7 @@ num operator - (){
     return b;
 }
     // subtraction
-num operator - (num& b){
+num operator - (num  b){
     num ans;
     char carry = 0;
     for(int i = 2*M -1; i>=0; i--){
@@ -308,7 +308,7 @@ num operator - (double y){
 }
 
   // comparision
-bool operator == (num& b){
+bool operator == (num  b){
     for(int i =2*M-1; i>=0; i--){
         if(x[i]!=b.x[i]) return false;
     }
@@ -338,7 +338,7 @@ bool operator == (const char k[]){
     
 }
 
-bool operator != (num& b){
+bool operator != (num  b){
     for(int i =2*M-1; i>=0; i--){
         if(x[i]!=b.x[i]) return true;
     }
@@ -368,7 +368,7 @@ bool operator != (const char k[]){
     
 }
 
-bool operator > (num& b){
+bool operator > (num  b){
     if(x[0]>=5 && b.x[0] < 5) return  false;
     if(x[0]<=5 && b.x[0] > 5) return  true;
     if(x[0]<=5 && b.x[0] < 5) {
@@ -458,7 +458,7 @@ bool operator > (const char k[]){
         return false;
 }
 
-bool operator >= (num& b){
+bool operator >= (num  b){
     if(x[0]>=5 && b.x[0] < 5) return  false;
     if(x[0]<=5 && b.x[0] > 5) return  true;
     if(x[0]<=5 && b.x[0] < 5) {
@@ -541,7 +541,7 @@ bool operator >= (const char k[]){
 }
 
 
-bool operator <= (num& b){
+bool operator <= (num  b){
     if(x[0]>=5 && b.x[0] < 5) return  true;
     if(x[0]<=5 && b.x[0] > 5) return  false;
     if(x[0]<=5 && b.x[0] < 5) {
@@ -631,7 +631,7 @@ bool operator <= (const char k[]){
         return true;
 }
 
-bool operator < (num& b){
+bool operator < (num  b){
     if(x[0]>=5 && b.x[0] < 5) return  true;
     if(x[0]<=5 && b.x[0] > 5) return  false;
     if(x[0]<=5 && b.x[0] < 5) {
@@ -713,36 +713,15 @@ bool operator < (const char k[]){
         return false;
 }
 
-num operator >> (int b);
-num operator << (int b){
-    num ans;
-    if(b>0) {
-        int i=b;
-        for(;i>2*M;i--) ans.x[i-b] = x[i];
-        for(;i-b>2*M; i--) ans.x[i-b] =0;
-        return ans;
-    }
-    return *this >> (-b);
-}
-num operator >> (int b){
-    num ans;
-    if(b>0) {
-        char l = x[0]>4 ? 9:0;
-        int i = 2*M -1 - b;
-        for(;i>=0;i--) ans.x[i+b] = x[i];
-        for(;i+b>0; i--) ans.x[i+b] = l;
-    }
-    return *this << (-b);
-}
-    // multiplication
-num operator * (num& b){
+   // multiplication
+num operator * (num b){
     if(x[0]<5 && b.x[0]<5){
         int ans[4*M-1];
         for(int i=0; i<4*M; i++) ans[i]=0;
         for(int i=2*M -1; i>=0; i--){
             if(!b.x[i]) continue;
-            for(int j= 2*M-1; j>=0; j++){
-                ans[i+j] += (int)(x[i] * b.x[j]); 
+            for(int j= 2*M-1; j>=0; j--){
+                ans[i+j] += (x[i] * b.x[j]); 
             }
         }
         for(int i=4*M-2; i>0; i--){
@@ -809,7 +788,7 @@ num operator * (num& b){
         for(int i=0; i<4*M; i++) ans[i]=0;
         for(int i=2*M -1; i>=0; i--){
             if(!d.x[i]) continue;
-            for(int j= 2*M-1; j>=0; j++){
+            for(int j= 2*M-1; j>=0; j--){
                 ans[i+j] += (int)(c.x[i] * d.x[j]); 
             }
         }
@@ -859,9 +838,23 @@ num operator * (double y){
     return (*this) * num(y);
 }
 
+num abs(){
+    if( (*this) > 0) return *this;
+    return -(*this);
+}
     // division
+num rec(){
+    num small("0.00001");
+    num g1,g2=small; 
+    do 
+    { 
+        g1=g2; 
+        g2= g1*2-g1*g1*(*this); 
+    }while((g1-g2).abs() > small); 
+    return g1;
+}
 
-num operator / (num& b){
+num operator / (num b){
     return  b;
 }
     // usefull functions
@@ -911,15 +904,12 @@ static num MIN_NUM(){
 }
 };
 
-void prt(num& a){
+void prt(num a){
     a.prt();
 }
 
 int main(){
-    num a= "4.11";
-    num c = -1000;
-    if(a==6);
-    c -= a;
-    prt(c);
+    num b = num(299);
+    prt(b.rec());
     return 0;
 }
