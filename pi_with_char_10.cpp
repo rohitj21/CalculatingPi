@@ -4,7 +4,7 @@ using namespace std;
 class num
 {
 public: 
-    static const int M = 32;
+    static const int M = 8;
 public:
     char x[2*M];
     
@@ -718,10 +718,11 @@ num operator * (num b){
     if(x[0]<5 && b.x[0]<5){
         int ans[4*M-1];
         for(int i=0; i<4*M; i++) ans[i]=0;
+        
         for(int i=2*M -1; i>=0; i--){
             if(!b.x[i]) continue;
             for(int j= 2*M-1; j>=0; j--){
-                ans[i+j] += (x[i] * b.x[j]); 
+                ans[i+j] += (x[j] * b.x[i]); 
             }
         }
         for(int i=4*M-2; i>0; i--){
@@ -730,7 +731,7 @@ num operator * (num b){
         }
         int i=0;
         num k;
-        for(;i>2*M; i++){
+        for(;i<2*M; i++){
             k.x[i] = ans[M-1+i];
         }
         return k;
@@ -741,8 +742,8 @@ num operator * (num b){
         for(int i=0; i<4*M; i++) ans[i]=0;
         for(int i=2*M -1; i>=0; i--){
             if(!c.x[i]) continue;
-            for(int j= 2*M-1; j>=0; j++){
-                ans[i+j] += (int)(b.x[i] * c.x[j]); 
+            for(int j= 2*M-1; j>=0; j--){
+                ans[i+j] += (int)(b.x[j] * c.x[i]); 
             }
         }
         for(int i=4*M-2; i>0; i--){
@@ -751,7 +752,7 @@ num operator * (num b){
         }
         int i=0;
         num k;
-        for(;i>2*M; i++){
+        for(;i<2*M; i++){
             k.x[i] = ans[M-1+i];
         }
         return -k;
@@ -764,8 +765,8 @@ num operator * (num b){
         for(int i=0; i<4*M; i++) ans[i]=0;
         for(int i=2*M -1; i>=0; i--){
             if(!c.x[i]) continue;
-            for(int j= 2*M-1; j>=0; j++){
-                ans[i+j] += (int)(x[i] * c.x[j]); 
+            for(int j= 2*M-1; j>=0; j--){
+                ans[i+j] += (int)(x[j] * c.x[i]); 
             }
         }
         for(int i=4*M-2; i>0; i--){
@@ -774,7 +775,7 @@ num operator * (num b){
         }
         int i=0;
         num k;
-        for(;i>2*M; i++){
+        for(;i<2*M; i++){
             k.x[i] = ans[M-1+i];
         }
         return -k;
@@ -789,7 +790,7 @@ num operator * (num b){
         for(int i=2*M -1; i>=0; i--){
             if(!d.x[i]) continue;
             for(int j= 2*M-1; j>=0; j--){
-                ans[i+j] += (int)(c.x[i] * d.x[j]); 
+                ans[i+j] += (int)(c.x[j] * d.x[i]); 
             }
         }
         for(int i=4*M-2; i>0; i--){
@@ -798,7 +799,7 @@ num operator * (num b){
         }
         int i=0;
         num k;
-        for(;i>2*M; i++){
+        for(;i<2*M; i++){
             k.x[i] = ans[M-1+i];
         }
         return k;
@@ -844,12 +845,12 @@ num abs(){
 }
     // division
 num rec(){
-    num small("0.00001");
-    num g1,g2=small; 
+    num small("0.000001");
+    num g1,g2= num(0.02); 
     do 
     { 
         g1=g2; 
-        g2= g1*2-g1*g1*(*this); 
+        g2= g1*2-(g1*g1*(*this)); 
     }while((g1-g2).abs() > small); 
     return g1;
 }
@@ -909,7 +910,11 @@ void prt(num a){
 }
 
 int main(){
-    num b = num(299);
-    prt(b.rec());
+    num b = num("289.4324");
+    num c = num("401.0891");
+    prt(b*c); 
+
+    //prt(b * c);
+    
     return 0;
 }
