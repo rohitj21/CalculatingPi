@@ -4,7 +4,9 @@ using namespace std;
 class num
 {
 public: 
-    static const int M = 8;
+    static const int M = 100;
+    static int small;
+
 public:
     char x[2*M];
     
@@ -188,6 +190,8 @@ void operator =(const char k[]){
         }
 }
 
+public:
+
     // increment 
 void operator ++ (int){
     for(int i=M-1; i>=0; i--) {
@@ -283,9 +287,11 @@ num operator + (double y){
 num operator - (){
     num b;
     int j=2*M-1;
-    for(;!x[j]; j--)
+    for(;!x[j] && j>=0; j--){
         b.x[j] =0;
-    if(j>=0)b.x[j] = 10 -x[j];
+    }
+    if(j>=0)
+        b.x[j] = 10 -x[j];
     for(j--;j>=0; j--) 
         b.x[j] =9 - x[j];
     return b;
@@ -845,14 +851,61 @@ num abs(){
 }
     // division
 num rec(){
-    num small("0.000001");
-    num g1,g2= num(0.02); 
+    if(x[0]<5){
+    // define a small number
+    num small(0);
+    small.x[2*M-3] = 1;
+    // handle edge cases
+    // make a good guess
+    num guess(0);
+    int r = 0;
+    for(; !x[r] && r<2*M; r++);
+    if(x[r]>7 ) guess.x[2*M-1-r] = 1;
+    else if(x[r]>3) guess.x[2*M-1-r] = 2;
+    else if(x[r] == 3)  guess.x[2*M-1-r] = 3; 
+    else if(x[r] == 2)  guess.x[2*M-1-r] = 5; 
+    else guess.x[2*M-2-r] = 1; 
+    
+    num guess1; 
+    int count =0;
     do 
     { 
-        g1=g2; 
-        g2= g1*2-(g1*g1*(*this)); 
-    }while((g1-g2).abs() > small); 
-    return g1;
+        // cout << count << " :    "; 
+       // count++;
+        // guess.prt();
+        // cout<<endl;
+        guess1=guess; 
+        guess= guess1*2-(guess1*guess1*(*this)); 
+    }while((guess1-guess).abs() > small); 
+    //cout << count;
+    return guess;
+    }
+
+    else {
+    // define a small number
+    num w = -(*this);
+    num small(0);
+    small.x[2*M-3] = 1;
+    // handle edge cases
+    // make a good guess
+    num guess(0);
+    int r = 0;
+    for(; !w.x[r] && r<2*M; r++);
+    if(w.x[r]>7 ) guess.x[2*M-1-r] = 1;
+    else if(w.x[r]>3) guess.x[2*M-1-r] = 2;
+    else if(w.x[r] == 3)  guess.x[2*M-1-r] = 3; 
+    else if(w.x[r] == 2)  guess.x[2*M-1-r] = 5; 
+    else guess.x[2*M-2-r] = 1; 
+    
+    num guess1; 
+    do 
+    { 
+
+        guess1=guess; 
+        guess= guess1*2-(guess1*guess1*w); 
+    }while((guess1-guess).abs() > small); 
+    return -guess;
+    }
 }
 
 num operator / (num b){
@@ -861,14 +914,22 @@ num operator / (num b){
     // usefull functions
 void prt(){
         if(x[0]<5){
+            int s = 0;
             int i =0;
-            while(x[i]==0&&i<M-1)i++;
-            for(; i<M; i++) printf("%d", x[i]);
+            while(!x[i] && i<M-1)i++;
+            for(; i<M; i++) {
+                if(!((i)%5)) printf(" ");
+                printf("%d", x[i]);
+            }
             int t=2*M-1;
             while(x[t]==0 && t>M-1) t--;
             if(t!=M-1){
                 std:: cout<<'.';
-                for(int i=M; i<=t;i++)  printf("%d", x[i]);
+                s = 0;
+                for(int i=M; i<=t;i++) {
+                    if(!(s%5) && s) cout<<" ";s++;
+                    printf("%d", x[i]);
+                }
             }
         }
 
@@ -881,28 +942,25 @@ void prt(){
             for(i--; i>=0; i--) temp.x[i] = 9 - x[i];
             i =0;
             while(temp.x[i]==0 && i<M-1) i++;
-            for(; i<M; i++) printf("%d", temp.x[i]);
+            for(; i<M; i++) {
+                if(!((i)%5)) printf(" ");
+                printf("%d", temp.x[i]);
+            }
             int t=2*M-1;
             while(temp.x[t]==0 && t>M-1) t--;
             if(t!=M-1){
                 std:: cout<<'.';
-                for(int i=M; i<=t;i++)  printf("%d", temp.x[i]);
+                int s=0;
+                for(int i=M; i<=t;i++)  {
+                    if(!(s%5) && s) cout<<" ";s++;
+                    printf("%d", temp.x[i]);
+                }
             }
 
 
             
         }
     }
-static num MIN_NUM(){
-
-        num ans;
-        int i;
-        for(i =0; i<2*M; i++){
-            ans.x[i] = 0;
-        }
-        ans.x[i-1] = 1;
-        return ans;
-}
 };
 
 void prt(num a){
@@ -910,11 +968,9 @@ void prt(num a){
 }
 
 int main(){
-    num b = num("289.4324");
-    num c = num("401.0891");
-    prt(b*c); 
-
-    //prt(b * c);
+    num b = (num(-.007)).rec(); 
+   b.prt();
     
     return 0;
+
 }
