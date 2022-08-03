@@ -5,9 +5,7 @@ using namespace std;
 class num
 {
 public: 
-    static const int M = 30;
-    static int small;
-
+    static const int M = 1024;
 public:
     char x[2*M];
     
@@ -322,6 +320,9 @@ bool operator == (num  b){
     return true;
 }
 bool operator == (int n){
+    if(n==0) {
+        for(int i=2*M-1; i>=0; i--) if(x[i]) return false; return true;
+    }
     num b(n);
         for(int i =2*M-1; i>=0; i--){
         if(x[i]!=b.x[i]) return false;
@@ -864,8 +865,6 @@ num rec(){
     num guess1; 
     num two(2);
     for(int i=0; i<2* log2(M); i++){ 
-        guess.prt();
-        cout<<endl;
         guess1=guess; 
         guess= guess1* (two - guess1*(*this)); 
         if((guess1-guess).abs() < small) break;
