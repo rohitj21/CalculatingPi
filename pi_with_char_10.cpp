@@ -1,4 +1,4 @@
-#include "num_sys_1.hpp"
+#include "num_sys_1.hpp" 
 num arctan(num x){
     num xx = x*x;
     num ans(0);
@@ -19,4 +19,9 @@ int main(){
     printf("Time taken: %.6fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
     return 0;
 
+
+
+    // pi/4 = 4 arctan(1/5) - arctan(1/239)
+    // acrtan(a) + arctan(b) = arctan ((a+b)/(1-ab))
+    // arctan(1)
 }
